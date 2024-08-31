@@ -20,6 +20,14 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+
+const corsOptions = {
+  origin: process.env.CLIENT_URL, // replace with your client URL
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
+
+
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
@@ -51,8 +59,11 @@ const validateExpense = [
 // Error handling middleware
 const errorHandler = (err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Internal Server Error' });
+  res.status(500).json({
+    message: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,
+  });
 };
+
 
 // API routes
 app.get("/expenses", async (req, res, next) => {
