@@ -24,6 +24,8 @@ app.use(limiter);
 const corsOptions = {
   origin: process.env.CLIENT_URL, // replace with your client URL
   optionsSuccessStatus: 200,
+  methods: 'GET,POST,PUT,DELETE',
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
