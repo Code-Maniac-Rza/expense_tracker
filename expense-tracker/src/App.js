@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 
 const ExpenseTracker = () => {
     const [balance, setBalance] = useState(0);
@@ -14,7 +16,7 @@ const ExpenseTracker = () => {
     useEffect(() => {
         const fetchExpenses = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/expenses');
+                const response = await axios.get(`${API_URL}/expenses`);
                 setTransactions(response.data);
                 const initialBalance = response.data.reduce(
                     (acc, transaction) => acc + transaction.amount, 
@@ -27,7 +29,7 @@ const ExpenseTracker = () => {
         };
 
         fetchExpenses();
-    }, []);
+    }, [API_URL]);
 
     // Add or update expense
     const handleExpense = async () => {
@@ -49,7 +51,7 @@ const ExpenseTracker = () => {
                 const oldTransaction = transactions.find((transaction) => transaction._id === editingId);
     
                 // Update the backend
-                await axios.put(`http://localhost:5000/expenses/${editingId}`, {
+                await axios.put(`${API_URL}/expenses/${editingId}`, {
                     description,
                     amount: parsedAmount,
                     category,
@@ -75,7 +77,7 @@ const ExpenseTracker = () => {
                 setEditMode(false);
                 setEditingId('');
             } else {
-                const response = await axios.post('http://localhost:5000/expenses', {
+                const response = await axios.post(`${API_URL}/expenses`, {
                     description,
                     amount: parsedAmount,
                     category,
@@ -110,7 +112,7 @@ const ExpenseTracker = () => {
     // Delete an expense
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/expenses/${id}`);
+            await axios.delete(`${API_URL}/expenses/${id}`);
             setTransactions((prevTransactions) =>
                 prevTransactions.filter((transaction) => transaction._id !== id)
             );
